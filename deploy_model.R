@@ -20,11 +20,11 @@ predict.default.rate <- function(
   ,LevelPar
 ) {
   data <- list(
-    DataSizeGB=DataSizeGB
-    ,NumEx=NumEx
-    , ExCore=ExCore
-    , ExMem=ExMem
-    ,LevelPar=LevelPar
+    DataSizeGB=as.numeric(DataSizeGB)
+    ,NumEx=as.numeric(NumEx)
+    , ExCore=as.numeric(ExCore)
+    , ExMem=as.numeric(ExMem)
+    ,LevelPar=as.numeric(LevelPar)
   )
   rfpred <- predict(rf.tune.grid, data)
   svmpred <- predict(svm.tune.grid, data)

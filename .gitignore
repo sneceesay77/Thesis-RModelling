@@ -1,5 +1,4 @@
 *.png
-*.RData
 *.report
 .RHistory
 .Rhistory
