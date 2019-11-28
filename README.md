@@ -1,9 +1,39 @@
 # RModelling Data Flow With Cycle
 
-We have developed a simple proof of concept model and deployed it using R-Plumber on our server. Using our framework, you can test how long it will take to run a sample SVM algorithm implemented in the HiBench benchmarking suite using the following command.
+# We have implemented a comphrensive REST API that users can use to see how long it will take to run any of the six Machine learning applications included in this work. The following applications are included.
 
-curl -X POST -d '{"DataSizeGB":10, "NumEx":16, "ExCore":1, "ExMem":1, "LevelPar":6}' -H 'Content-Type: application/json' https://sc306.host.cs.st-andrews.ac.uk/dfwc/
+## Support Vector Machines
+## Random Forest
+## Linear Regression
+## Logistic Regression
+## K-means
+## Naive Bayes
 
+# To test any of the algorithms below use the following parameters
 
-You can change the JSON data to whatever you want. However, this is model based on our cluster and there are some limitation as to how much the values can be. 
+## DataSizeGB -> Size of data to process
+## NumEx -> Number of Executors
+## ExCore -> Executor Cores
+## ExMem -> Executor Memory
+## LevelPar -> Level of Parallelism
+
+# Examples
+
+## Support Vector Machines
+### curl -X POST -d '{"DataSizeGB":10, "NumEx":16, "ExCore":1, "ExMem":1, "LevelPar":6, "App":"SVM"}' -H 'Content-Type: application/json' https://sc306.host.cs.st-andrews.ac.uk/dfwc/
+
+## Random Forest
+### curl -X POST -d '{"DataSizeGB":10, "NumEx":16, "ExCore":1, "ExMem":1, "LevelPar":6, "App":"RF"}' -H 'Content-Type: application/json' https://sc306.host.cs.st-andrews.ac.uk/dfwc/
+
+## Linear Regression
+### curl -X POST -d '{"DataSizeGB":10, "NumEx":16, "ExCore":1, "ExMem":1, "LevelPar":6, "App":"LINEAR"}' -H 'Content-Type: application/json' https://sc306.host.cs.st-andrews.ac.uk/dfwc/
+
+## Logistic Regression
+### curl -X POST -d '{"DataSizeGB":10, "NumEx":16, "ExCore":1, "ExMem":1, "LevelPar":6, "App":"LR"}' -H 'Content-Type: application/json' https://sc306.host.cs.st-andrews.ac.uk/dfwc/
+
+## K-means
+### curl -X POST -d '{"DataSizeGB":10, "NumEx":16, "ExCore":1, "ExMem":1, "LevelPar":6, "App":"KMEANS"}' -H 'Content-Type: application/json' https://sc306.host.cs.st-andrews.ac.uk/dfwc/
+
+## Naive Bayes
+### curl -X POST -d '{"DataSizeGB":10, "NumEx":16, "ExCore":1, "ExMem":1, "LevelPar":6, "App":"BAYES"}' -H 'Content-Type: application/json' https://sc306.host.cs.st-andrews.ac.uk/dfwc/
 
