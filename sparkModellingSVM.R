@@ -78,6 +78,9 @@ summary(allDataOriginal)
 #allDataOriginal$DriverMem = factor(allDataOriginal$DriverMem)
 
 
+geom_boxplot(allDataOriginal)
+
+
 generatePlot <- function(originalData, filterbyCol, filterByVal, title, color){
   
   #xval = seq(min(filteredData$DataSizeMB), nrow(filteredData), by = (max(filteredData$DataSizeMB)/nrow(filteredData)))
@@ -98,12 +101,30 @@ generatePlot <- function(originalData, filterbyCol, filterByVal, title, color){
 }
 
 generateDistributionPlot <- function(originalData, filterbyCol, filterByVal, title, color){
-  f = originalData %>%  filter(originalData[[filterbyCol]] == filterByVal) %>% arrange(!!sym(color))
-  p<-ggplot(f, aes(x=f$Duration.s.,  colour=factor(f[[color]]))) + geom_histogram(aes(y=..density..), binwidth = 2, color="black", fill="white") + labs(x="Time(s)",y="Density", color=color)+ggtitle(title)+
+  f <- originalData %>%  filter(originalData[[filterbyCol]] == filterByVal) %>% arrange(!!sym(color))
+  p<-ggplot(f, aes(x=f$Duration.s.,  colour=factor(f[[color]]))) + geom_histogram(binwidth = 50, color="black", fill="white") + labs(x="Time(s)", y="Frequency", color=color)+ggtitle(title)+
+    geom_vline(aes(xintercept=mean(f$Duration.s., na.rm=T)), color="red", linetype="dashed", size=1)+
     theme(plot.title = element_text(size = 12, face = "bold"), axis.text.y=element_text(size=11, face = "bold"),
           axis.title=element_text(size=12,face="bold"), axis.text.x = element_text(size = 11, face = "bold", angle = 0, hjust = 1))
   return(p)
 }
+
+generateBoxPlot <- function(originalData, filterbyCol, col2,val2,title){
+  a = originalData %>%  filter(originalData$Duration.s. <= 200)
+  f = a %>%  filter(a[[filterbyCol]] %in% c(4,8,16,24,32) & a[[col2]] %in% c(val2))
+  p <- ggplot(f, aes(x=as.factor(f$NumEx), y=f$Duration.s.))+ggtitle(title)+
+    geom_boxplot() +
+    labs(x="Executors", y="Time(s)")+
+    theme(plot.title = element_text(size = 12, face = "bold"), axis.text.y=element_text(size=11, face = "bold"),
+          axis.title=element_text(size=12,face="bold"), axis.text.x = element_text(size = 11, face = "bold", angle = 0, hjust = 1))
+  return(p)
+}
+
+
+
+box01 <- generateBoxPlot(allDataOriginal, "NumEx", "DataSizeMB", 191, "191 MB")
+box02 <- generateBoxPlot(allDataOriginal, "NumEx", "DataSizeMB", 618,"3 GB")
+box03 <- generateBoxPlot(allDataOriginal, "NumEx", "DataSizeMB", 12209, "12 GB")
 
 #Distribution plot
 ne1 <- generateDistributionPlot(allDataOriginal, "DataSizeMB", 191, "191MB", "NumEx")
@@ -120,7 +141,9 @@ ne9<-generateDistributionPlot(allDataOriginal, "NumEx", 8, "8 Executors", "DataS
 ne10<-generateDistributionPlot(allDataOriginal, "NumEx", 16, "16 Executors", "DataSizeMB")
 ne11<-generateDistributionPlot(allDataOriginal, "NumEx", 24, "24 Executors", "DataSizeMB")
 ne12<-generateDistributionPlot(allDataOriginal, "NumEx", 32, "32 Executors", "DataSizeMB")
-annotate_figure(ggarrange(ne8,ne9,ne10,ne12, ncol=2, nrow=2, common.legend = TRUE, legend = "bottom"))
+annotate_figure(ggarrange(ne8,ne9,ne10,ne12,box01,box03, ncol=2, nrow=3, common.legend = TRUE, legend = "bottom"))
+
+annotate_figure(ggarrange(box01,box03, ncol=2, nrow=1, common.legend = TRUE, legend = "bottom"))
 
 p01 <- generatePlot(allDataOriginal, "DataSizeMB", 191, "191MB", "NumEx")
 p02 <- generatePlot(allDataOriginal, "DataSizeMB", 275, "275MB", "NumEx")  
@@ -247,19 +270,19 @@ lm <- train(Duration.s.~ DataSizeGB + NumEx  + ExCore + ExMem, data=training_set
 rpart <- train(Duration.s.~ DataSizeGB + NumEx  + ExCore + ExMem, data=training_set[c(-6)], method="rpart2", trControl=control)
 #bayes <- train(Duration.s.~ DataSizeGB + NumEx  + ExCore + ExMem, data=training_set[c(-6)], method="bridge", trControl=control)
 
-#Train with tuning random search
+#Train with tuning random search: sorce: https://machinelearningmastery.com/tune-machine-learning-algorithms-in-r/
 control <- trainControl(method="repeatedcv", number=10, repeats=3, search = "random")
-mtry <- sqrt(ncol(training_set))
+mtry <- sqrt(ncol(training_set))#not needed random search will automaticall do this
 rf.tune.random <- train(Duration.s.~ DataSizeGB + NumEx  + ExCore + ExMem, data=training_set[c(-6)], method="rf", trControl=control)
 svm.svm.tune.random <- train(Duration.s.~ DataSizeGB + NumEx  + ExCore + ExMem, data=training_set[c(-6)], method="svmRadial", trControl=control)
 lm.tune.random <- train(Duration.s.~ DataSizeGB + NumEx  + ExCore + ExMem, data=training_set[c(-6)], method="lm", trControl=control)
 rpart.tune.random <- train(Duration.s.~ DataSizeGB + NumEx  + ExCore + ExMem, data=training_set[c(-6)], method="rpart2", trControl=control)
 
 
-#Training models using grid search
+#Training models using grid search source: https://machinelearningmastery.com/tune-machine-learning-algorithms-in-r/
 control <- trainControl(method="repeatedcv", number=10, repeats=3, search = "grid")
 grid_radial <- expand.grid(sigma = c(0, 0.0001, 0.001, 0.01, 0.02, 0.025), C = c(1, 100, 500, 1000, 1500, 2000, 3000, 4000, 5000 ))
-mtry <- sqrt(ncol(training_set))
+mtry <- sqrt(ncol(training_set))#not needed grid search will automaticall do this
 rf.tune.grid <- train(Duration.s.~ DataSizeGB + NumEx  + ExCore + ExMem, data=training_set[c(-6)], method="rf", trControl=control)
 svm.tune.grid <- train(Duration.s.~ DataSizeGB + NumEx  + ExCore + ExMem, data=training_set[c(-6)], method="svmRadial", tuneGrid=grid_radial, trControl=control)
 lm.tune.grid <- train(Duration.s.~ DataSizeGB + NumEx  + ExCore + ExMem, data=training_set[c(-6)], method="lm", trControl=control)

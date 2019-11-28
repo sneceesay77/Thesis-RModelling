@@ -100,8 +100,8 @@ rpart.tune.random <- train(Duration.s.~ DataSizeGB + NumEx  + ExCore + ExMem, da
 #Training models using grid search
 control <- trainControl(method="repeatedcv", number=10, repeats=3, search = "grid")
 grid_radial <- expand.grid(sigma = c(0, 0.0001, 0.001, 0.01, 0.02, 0.025), C = c(1, 100, 500, 1000, 1500, 2000, 3000, 4000, 5000 ))
-rf.tune.grid <- train(Duration.s.~ DataSizeGB + NumEx  + ExCore + ExMem, data=training_set[c(-6)], method="rf", trControl=control)
-svm.tune.grid <- train(Duration.s.~ DataSizeGB + NumEx  + ExCore + ExMem, data=training_set[c(-6)], method="svmRadial", tuneGrid=grid_radial, trControl=control)
+rf.tune.grid.bayes <- train(Duration.s.~ DataSizeGB + NumEx  + ExCore + ExMem, data=training_set[c(-6)], method="rf", trControl=control)
+svm.tune.grid.bayes <- train(Duration.s.~ DataSizeGB + NumEx  + ExCore + ExMem, data=training_set[c(-6)], method="svmRadial", tuneGrid=grid_radial, trControl=control)
 lm.tune.grid <- train(Duration.s.~ DataSizeGB + NumEx  + ExCore + ExMem, data=training_set[c(-6)], method="lm", trControl=control)
 rpart.tune.grid <- train(Duration.s.~ DataSizeGB + NumEx  + ExCore + ExMem, data=training_set[c(-6)], method="rpart2", trControl=control)
 
@@ -238,5 +238,5 @@ predict(rf.tune.grid, data.frame("DataSizeGB" = 1.9231721, "NumEx" = 4, "ExCore"
 # predict(rpart.tune.random, data.frame("DataSizeGB" = 110.9231721, "NumEx" = 4, "ExCore" = 2, "ExMem" = 2, "LevelPar" = 64))
 # predict(rpart.tune.grid, data.frame("DataSizeGB" = 110.9231721, "NumEx" = 4, "ExCore" = 2, "ExMem" = 2, "LevelPar" = 64))
 
-save(rf.tune.grid, file = "RFGridModelForSVM.RData")
-save(svm.tune.grid, file = "SVMGridModelForSVM.RData")
+save(rf.tune.grid.bayes, file = "RFGridModelForBAYES.RData")
+save(svm.tune.grid.bayes, file = "SVMGridModelForBAYES.RData")

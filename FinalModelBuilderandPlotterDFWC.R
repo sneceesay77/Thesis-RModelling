@@ -23,7 +23,16 @@ generateModelPlotOnTest <- function(datafile, title, xlabel, ylabel){
   
   allDataOriginal$DataSizeMB <- round((allDataOriginal$Input_data_size/1048576))
   allDataOriginal$DataSizeGB <- allDataOriginal$Input_data_size/1073741824
-  
+  if(datafile == "linear.report"){
+    allDataOriginal <- filter(allDataOriginal, Duration.s. <= 100)
+  }else if(datafile == "lr.report"){
+    allDataOriginal <- filter(allDataOriginal, Duration.s. <= 500)
+  }else if(datafile == "rf.report"){
+    allDataOriginal <- filter(allDataOriginal, Duration.s. <= 200)
+  }else if(datafile == "kmeans.report"){
+    allDataOriginal <- filter(allDataOriginal, Duration.s. <= 200)
+  }
+ 
   
   #allDataOriginal <- select(allDataOriginal, Duration.s., NumEx, ExCore, ExMem, DataSizeMB, DataSizeGB)
   
@@ -44,9 +53,14 @@ generateModelPlotOnTest <- function(datafile, title, xlabel, ylabel){
   control <- trainControl(method="repeatedcv", number=10, repeats=3, search = "random")
   model <- train(Duration.s.~ DataSizeGB + NumEx  + ExCore + ExMem, data=training_set[c(-6)], method="svmRadial", trControl=control)
   
-  plot <- ggplot(data) +
-    geom_line(aes(seq(1:nrow(data)), Duration.s., color='red'))+
-    geom_line(aes(seq(1:nrow(data)), predict(model, data), color='green'))+
+  
+  data$predict <- predict(model,data)
+  # plot <- ggplot(data) +
+  #   geom_line(aes(seq(1:nrow(data)), Duration.s., color='red'))+
+  #   geom_line(aes(seq(1:nrow(data)), predict(model, data), color='green'))+
+  plot <- ggplot(data, aes(Duration.s., predict)) +
+    geom_point() +
+    geom_smooth(method = "lm", se = FALSE) +
     ggtitle(title)+
     xlab(xlabel)+
     ylab(ylabel)+
@@ -56,27 +70,25 @@ generateModelPlotOnTest <- function(datafile, title, xlabel, ylabel){
                          guide = "legend")+
     theme(plot.title = element_text(size = 12, face = "bold"), axis.text.y=element_text(size=11, face = "bold"),
           axis.title=element_text(size=12,face="bold"), axis.text.x = element_text(size = 11, face = "bold", angle = 0, hjust = 1), legend.text = element_text(size=11, face = "bold"), legend.title = element_blank())
-  return (plot)
+  return (list("plot"=plot, "data"=data))
 }
 
 
 
 
-svm <- generateModelPlotOnTest("svm.report", "Support Vector", "Observation", "Time(s)")
-bayes <- generateModelPlotOnTest("bayes.report", "Naive Bayes", "Observation", "Time(s)")
+svm <- generateModelPlotOnTest("svm.report", "Support Vector", "Predicted", "Actual")
+bayes <- generateModelPlotOnTest("bayes.report", "Naive Bayes", "Predicted", "Actual")
 
-lr <- generateModelPlotOnTest("lr.report", "Logistic Regression", "Observation", "Time(s)")
-linear <- generateModelPlotOnTest("linear.report", "Linear Regression", "Observation", "Time(s)")
+lr <- generateModelPlotOnTest("lr.report", "Logistic Regression", "Predicted", "Actual")
+linear <- generateModelPlotOnTest("linear.report", "Linear Regression", "Predicted", "Actual")
 
-kmeans <- generateModelPlotOnTest("kmeans.report", "K-Means", "Observation", "Time(s)")
-rf <- generateModelPlotOnTest("rf.report", "Random Forest", "Observation", "Time(s)")
-
-
-
-ggarrange(svm, bayes, nrow=1, ncol = 2, common.legend = TRUE, legend = "bottom")
-ggarrange(lr, linear, nrow=1, ncol = 2, common.legend = TRUE, legend = "bottom")
-ggarrange(kmeans, rf, nrow=1, ncol = 2, common.legend = TRUE, legend = "bottom")
+kmeans <- generateModelPlotOnTest("kmeans.report", "K-Means", "Predicted", "Actual")
+rf <- generateModelPlotOnTest("rf.report", "Random Forest", "Predicted", "Actual")
 
 
+
+ggarrange(svm$plot, bayes$plot, nrow=1, ncol = 2, common.legend = TRUE, legend = "bottom")
+ggarrange(lr$plot, linear$plot, nrow=1, ncol = 2, common.legend = TRUE, legend = "bottom")
+ggarrange(kmeans$plot, rf$plot, nrow=1, ncol = 2, common.legend = TRUE, legend = "bottom")
 
 

@@ -99,9 +99,19 @@ generatePlot <- function(originalData, filterbyCol, filterByVal, title, color){
   return(p)
 }
 
+# generateDistributionPlot <- function(originalData, filterbyCol, filterByVal, title, color){
+#   f = originalData %>%  filter(originalData[[filterbyCol]] == filterByVal) %>% arrange(!!sym(color))
+#   p<-ggplot(f, aes(x=f$Duration.s.,  colour=factor(f[[color]]))) + geom_histogram(aes(y=..density..), binwidth = 2, color="black", fill="white") + labs(x="Time(s)",y="Density", color=color)+ggtitle(title)+
+#     theme(plot.title = element_text(size = 12, face = "bold"), axis.text.y=element_text(size=11, face = "bold"),
+#           axis.title=element_text(size=12,face="bold"), axis.text.x = element_text(size = 11, face = "bold", angle = 0, hjust = 1))
+#   return(p)
+# }
+
 generateDistributionPlot <- function(originalData, filterbyCol, filterByVal, title, color){
   f = originalData %>%  filter(originalData[[filterbyCol]] == filterByVal) %>% arrange(!!sym(color))
-  p<-ggplot(f, aes(x=f$Duration.s.,  colour=factor(f[[color]]))) + geom_histogram(aes(y=..density..), binwidth = 2, color="black", fill="white") + labs(x="Time(s)",y="Density", color=color)+ggtitle(title)+
+  p<-ggplot(f, aes(x=f$Duration.s.,  colour=factor(f[[color]]))) + geom_histogram(binwidth = 30, color="black", fill="white") + labs(x="Time(s)", y="Frequency", color=color)+ggtitle(title)+
+    # geom_vline(aes(xintercept=mean(f$Duration.s., na.rm=T)), color="red", linetype="dashed", size=1)+
+    geom_text(aes(label=round(mean(f$Duration.s., na.rm=T),0),y=0,x=mean(f$Duration.s., na.rm=T)),vjust=-1,col='blue',size=4)
     theme(plot.title = element_text(size = 12, face = "bold"), axis.text.y=element_text(size=11, face = "bold"),
           axis.title=element_text(size=12,face="bold"), axis.text.x = element_text(size = 11, face = "bold", angle = 0, hjust = 1))
   return(p)

@@ -30,7 +30,7 @@ allDataOriginal$DataSizeGB <- allDataOriginal$Input_data_size/1073741824
 
 allDataOriginal <- select(allDataOriginal, Duration.s., NumEx, ExCore, ExMem, LevelPar, DataSizeMB, DataSizeGB)
 
-#allDataOriginal <- filter(allDataOriginal, Duration.s. <= 700)
+allDataOriginal <- filter(allDataOriginal, Duration.s. <= 700)
 
 #Do some data preprocessing
 
@@ -45,6 +45,118 @@ str(allDataOriginal)
 #allDataOriginal = filter(allDataOriginal, allDataOriginal$Duration.s. <= 3000)
 
 summary(allDataOriginal)
+
+generateDistributionPlot <- function(originalData, filterbyCol, filterByVal, title, color){
+  f = originalData %>%  filter(originalData[[filterbyCol]] == filterByVal) %>% arrange(!!sym(color))
+  p<-ggplot(f, aes(x=f$Duration.s.,  colour=factor(f[[color]]))) + geom_histogram(binwidth = 50, color="black", fill="white") + labs(x="Time(s)", y="Frequency", color=color)+ggtitle(title)+
+    geom_vline(aes(xintercept=mean(f$Duration.s., na.rm=T)), color="red", linetype="dashed", size=1)+
+    theme(plot.title = element_text(size = 12, face = "bold"), axis.text.y=element_text(size=11, face = "bold"),
+          axis.title=element_text(size=12,face="bold"), axis.text.x = element_text(size = 11, face = "bold", angle = 0, hjust = 1))
+  return(p)
+}
+
+#Distribution plot
+ne1 <- generateDistributionPlot(allDataOriginal, "DataSizeMB", 191, "191MB", "NumEx")
+ne2 <- generateDistributionPlot(allDataOriginal, "DataSizeMB", 275, "275MB", "NumEx")  
+ne3 <- generateDistributionPlot(allDataOriginal, "DataSizeMB", 489, "489MB", "NumEx")
+ne4 <- generateDistributionPlot(allDataOriginal, "DataSizeMB", 618, "618MB", "NumEx")
+ne5 <- generateDistributionPlot(allDataOriginal, "DataSizeMB", 764, "764MB", "NumEx")
+ne6 <- generateDistributionPlot(allDataOriginal, "DataSizeMB", 3053, "3GB", "NumEx")
+ne7 <- generateDistributionPlot(allDataOriginal, "DataSizeMB", 12209, "12GB", "NumEx")
+annotate_figure(ggarrange(ne1,ne3,ne5,ne7, ncol=2, nrow=2, common.legend = TRUE, legend = "bottom"), top="SVM Algorithm: Scatter Plot of scaling Executors")
+
+ne8<-generateDistributionPlot(allDataOriginal, "NumEx", 4, "4 Executors", "DataSizeMB")
+ne9<-generateDistributionPlot(allDataOriginal, "NumEx", 8, "8 Executors", "DataSizeMB")
+ne10<-generateDistributionPlot(allDataOriginal, "NumEx", 16, "16 Executors", "DataSizeMB")
+ne11<-generateDistributionPlot(allDataOriginal, "NumEx", 24, "24 Executors", "DataSizeMB")
+ne12<-generateDistributionPlot(allDataOriginal, "NumEx", 32, "32 Executors", "DataSizeMB")
+annotate_figure(ggarrange(ne8,ne9,ne10,ne12, ncol=2, nrow=2, common.legend = TRUE, legend = "bottom"))
+
+p01 <- generatePlot(allDataOriginal, "DataSizeMB", 191, "191MB", "NumEx")
+p02 <- generatePlot(allDataOriginal, "DataSizeMB", 275, "275MB", "NumEx")  
+p03 <- generatePlot(allDataOriginal, "DataSizeMB", 489, "489MB", "NumEx")
+p04 <- generatePlot(allDataOriginal, "DataSizeMB", 618, "618MB", "NumEx")
+p05 <- generatePlot(allDataOriginal, "DataSizeMB", 764, "764MB", "NumEx")
+p06 <- generatePlot(allDataOriginal, "DataSizeMB", 3053, "3GB", "NumEx")
+p07 <- generatePlot(allDataOriginal, "DataSizeMB", 12209, "12GB", "NumEx")
+
+#annotate_figure(ggarrange(p01,p02,p03,p05,p06,p07, ncol=2, nrow=3, common.legend = TRUE, legend = "bottom"), top="SVM Algorithm: Scatter Plot of scaling Executors")
+annotate_figure(ggarrange(p01,p04,p06,p07, ncol=2, nrow=2, common.legend = TRUE, legend = "bottom"), top="SVM Algorithm: Scatter Plot of scaling Executors")
+
+p1<-generatePlot(allDataOriginal, "NumEx", 4, "4 Executors", "DataSizeMB")
+p2<-generatePlot(allDataOriginal, "NumEx", 8, "8 Executors", "DataSizeMB")
+p3<-generatePlot(allDataOriginal, "NumEx", 16, "16 Executors", "DataSizeMB")
+p4<-generatePlot(allDataOriginal, "NumEx", 24, "24 Executors", "DataSizeMB")
+p5<-generatePlot(allDataOriginal, "NumEx", 32, "32 Executors", "DataSizeMB")
+
+annotate_figure(ggarrange(p1,p2,p3,p4,p5, ncol=2, nrow=3, common.legend = TRUE, legend = "bottom"), top="Scaling Dataset for each Executor")
+
+exc1<-generateDistributionPlot(allDataOriginal, "ExCore", 2, "2 Cores", "DataSizeMB")
+exc2<-generateDistributionPlot(allDataOriginal, "ExCore", 4, "4 Cores", "DataSizeMB")
+exc3<-generateDistributionPlot(allDataOriginal, "ExCore", 6, "6 Cores", "DataSizeMB")
+exc4<-generateDistributionPlot(allDataOriginal, "ExCore", 8, "8 Cores", "DataSizeMB")
+annotate_figure(ggarrange(exc1,exc2,exc3,exc4, ncol=2, nrow=2, common.legend = TRUE, legend = "bottom"))
+
+p6<-generatePlot(allDataOriginal, "ExCore", 2, "2 Cores", "DataSizeMB")
+p7<-generatePlot(allDataOriginal, "ExCore", 4, "4 Cores", "DataSizeMB")
+p8<-generatePlot(allDataOriginal, "ExCore", 6, "6 Cores", "DataSizeMB")
+p9<-generatePlot(allDataOriginal, "ExCore", 8, "8 Cores", "DataSizeMB")
+
+
+annotate_figure(ggarrange(p6,p7,p8,p9, ncol=2, nrow=2, common.legend = TRUE, legend = "bottom"), top="Scaling Executor Cores")
+
+ph <- generatePlot(allDataOriginal, "DataSizeMB", 191, "191MB", "ExCore")
+pi <- generatePlot(allDataOriginal, "DataSizeMB", 275, "275MB", "ExCore")
+pj <- generatePlot(allDataOriginal, "DataSizeMB", 489, "489MB", "ExCore")
+pk <- generatePlot(allDataOriginal, "DataSizeMB", 618, "618MB", "ExCore")
+pl <- generatePlot(allDataOriginal, "DataSizeMB", 764, "764MB", "ExCore")
+pm <- generatePlot(allDataOriginal, "DataSizeMB", 3053, "3GB", "ExCore")
+pn <- generatePlot(allDataOriginal, "DataSizeMB", 12209, "12GB", "ExCore")
+
+annotate_figure(ggarrange(ph,pi,pj,pk,pl,pm,pn, ncol=2, nrow=4, common.legend = TRUE, legend = "bottom"), top="Scaling Executors Cores for each Dataset")
+
+
+
+em1<-generateDistributionPlot(allDataOriginal, "ExMem", 2, "2GB", "DataSizeMB")
+em2<-generateDistributionPlot(allDataOriginal, "ExMem", 4, "4GB", "DataSizeMB")
+em3<-generateDistributionPlot(allDataOriginal, "ExMem", 6, "6GB", "DataSizeMB")
+em4<-generateDistributionPlot(allDataOriginal, "ExMem", 8, "8GB", "DataSizeMB")
+
+annotate_figure(ggarrange(em1, em2, em3, em4, ncol=2, nrow=2, common.legend = TRUE, legend = "bottom"))
+
+p10<-generatePlot(allDataOriginal, "ExMem", 2, "2GB", "DataSizeMB")
+p11<-generatePlot(allDataOriginal, "ExMem", 4, "4GB", "DataSizeMB")
+p12<-generatePlot(allDataOriginal, "ExMem", 6, "6GB", "DataSizeMB")
+p13<-generatePlot(allDataOriginal, "ExMem", 8, "8GB", "DataSizeMB")
+
+annotate_figure(ggarrange(p10, p11, p12, p13, ncol=2, nrow=2, common.legend = TRUE, legend = "bottom"), top="Scaling Dataset for each Memory Set")
+
+pa <- generatePlot(allDataOriginal, "DataSizeMB", 191, "191MB", "ExMem")
+pb <- generatePlot(allDataOriginal, "DataSizeMB", 275, "275MB", "ExMem")
+pc <- generatePlot(allDataOriginal, "DataSizeMB", 489, "489MB", "ExMem")
+pd <- generatePlot(allDataOriginal, "DataSizeMB", 618, "618MB", "ExMem")
+pe <- generatePlot(allDataOriginal, "DataSizeMB", 764, "764MB", "ExMem")
+pf <- generatePlot(allDataOriginal, "DataSizeMB", 3053, "3GB", "ExMem")
+pg <- generatePlot(allDataOriginal, "DataSizeMB", 12209, "12GB", "ExMem")
+
+annotate_figure(ggarrange(pa,pb,pc,pd,pe,pf,pg, ncol=2, nrow=4, common.legend = TRUE, legend = "bottom"), top="Scaling Executors Memory for each Dataset")
+
+p14<-generatePlot(allDataOriginal, "LevelPar", 8, "8", "DataSizeMB")
+p15<-generatePlot(allDataOriginal, "LevelPar", 16, "16", "DataSizeMB")
+p16<-generatePlot(allDataOriginal, "LevelPar", 32, "32", "DataSizeMB")
+p17<-generatePlot(allDataOriginal, "LevelPar", 64, "64", "DataSizeMB")
+
+annotate_figure(ggarrange(p14, p15, p16, p17, ncol=2, nrow=2, common.legend = TRUE, legend = "bottom"), top="Scaling Dataset for each Level of Paralellism Set")
+
+po <- generatePlot(allDataOriginal, "DataSizeMB", 191, "191MB", "LevelPar")
+pp <- generatePlot(allDataOriginal, "DataSizeMB", 275, "275MB", "LevelPar")
+pq <- generatePlot(allDataOriginal, "DataSizeMB", 489, "489MB", "LevelPar")
+pr <- generatePlot(allDataOriginal, "DataSizeMB", 618, "618MB", "LevelPar")
+ps <- generatePlot(allDataOriginal, "DataSizeMB", 764, "764MB", "LevelPar")
+pt <- generatePlot(allDataOriginal, "DataSizeMB", 3053, "3GB", "LevelPar")
+pu <- generatePlot(allDataOriginal, "DataSizeMB", 12209, "12GB", "LevelPar")
+
+annotate_figure(ggarrange(po,pp,pq,pr,ps,pt,pu, ncol=2, nrow=4, common.legend = TRUE, legend = "bottom"), top="Scaling Level of Paralellism Memory for each Dataset")
 
 #allDataOriginal$NumEx = factor(allDataOriginal$NumEx)
 #allDataOriginal$ExCore = factor(allDataOriginal$ExCore)
@@ -101,8 +213,8 @@ rpart.tune.random <- train(Duration.s.~ DataSizeGB + NumEx  + ExCore + ExMem, da
 #Training models using grid search
 control <- trainControl(method="repeatedcv", number=10, repeats=3, search = "grid")
 grid_radial <- expand.grid(sigma = c(0, 0.0001, 0.001, 0.01, 0.02, 0.025), C = c(1, 100, 500, 1000, 1500, 2000, 3000, 4000, 5000 ))
-rf.tune.grid <- train(Duration.s.~ DataSizeGB + NumEx  + ExCore + ExMem, data=training_set[c(-6)], method="rf", trControl=control)
-svm.tune.grid <- train(Duration.s.~ DataSizeGB + NumEx  + ExCore + ExMem, data=training_set[c(-6)], method="svmRadial", tuneGrid=grid_radial, trControl=control)
+rf.tune.grid.linear <- train(Duration.s.~ DataSizeGB + NumEx  + ExCore + ExMem, data=training_set[c(-6)], method="rf", trControl=control)
+svm.tune.grid.linear <- train(Duration.s.~ DataSizeGB + NumEx  + ExCore + ExMem, data=training_set[c(-6)], method="svmRadial", tuneGrid=grid_radial, trControl=control)
 lm.tune.grid <- train(Duration.s.~ DataSizeGB + NumEx  + ExCore + ExMem, data=training_set[c(-6)], method="lm", trControl=control)
 rpart.tune.grid <- train(Duration.s.~ DataSizeGB + NumEx  + ExCore + ExMem, data=training_set[c(-6)], method="rpart2", trControl=control)
 
@@ -228,5 +340,5 @@ predict(rf.tune.grid, data.frame("DataSizeGB" = 1.9231721, "NumEx" = 4, "ExCore"
 # predict(rpart.tune.random, data.frame("DataSizeGB" = 110.9231721, "NumEx" = 4, "ExCore" = 2, "ExMem" = 2, "LevelPar" = 64))
 # predict(rpart.tune.grid, data.frame("DataSizeGB" = 110.9231721, "NumEx" = 4, "ExCore" = 2, "ExMem" = 2, "LevelPar" = 64))
 
-save(rf.tune.grid, file = "RFGridModelForSVM.RData")
-save(svm.tune.grid, file = "SVMGridModelForSVM.RData")
+save(rf.tune.grid.linear, file = "RFGridModelForLINEAR.RData")
+save(svm.tune.grid.linear, file = "SVMGridModelForLINEAR.RData")
