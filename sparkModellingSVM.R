@@ -103,7 +103,8 @@ generatePlot <- function(originalData, filterbyCol, filterByVal, title, color){
 generateDistributionPlot <- function(originalData, filterbyCol, filterByVal, title, color){
   f <- originalData %>%  filter(originalData[[filterbyCol]] == filterByVal) %>% arrange(!!sym(color))
   p<-ggplot(f, aes(x=f$Duration.s.,  colour=factor(f[[color]]))) + geom_histogram(binwidth = 50, color="black", fill="white") + labs(x="Time(s)", y="Frequency", color=color)+ggtitle(title)+
-    geom_vline(aes(xintercept=mean(f$Duration.s., na.rm=T)), color="red", linetype="dashed", size=1)+
+    #geom_vline(aes(xintercept=mean(f$Duration.s., na.rm=T)), color="red", linetype="dashed", size=1)+
+    geom_vline(aes(xintercept=median(f$Duration.s., na.rm=T)), color="blue", linetype="dashed", size=1)+
     theme(plot.title = element_text(size = 12, face = "bold"), axis.text.y=element_text(size=11, face = "bold"),
           axis.title=element_text(size=12,face="bold"), axis.text.x = element_text(size = 11, face = "bold", angle = 0, hjust = 1))
   return(p)
