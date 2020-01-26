@@ -34,7 +34,7 @@ predict.default.rate <- function(DataSizeGB ,NumEx,ExCore,ExMem,LevelPar,App) {
     rfpred <- predict(rf.tune.grid.bayes, data)
     svmpred <- predict(svm.tune.grid.bayes, data)
     return(list("rf"=rfpred, "svm"=svmpred))
-  }else if(App=="LINEAR-REG"){
+  }else if(App=="LINEAR"){
     print("Predicting LINEAR REGRESSION")
     load("RFGridModelForLINEAR.RData")
     load("SVMGridModelForLINEAR.RData")
@@ -62,5 +62,59 @@ predict.default.rate <- function(DataSizeGB ,NumEx,ExCore,ExMem,LevelPar,App) {
     rfpred <- predict(rf.tune.grid.lr, data)
     svmpred <- predict(svm.tune.grid.lr, data)
     return(list("rf"=rfpred, "svm"=svmpred))
+  }
+}
+
+
+#* @post /best
+bestConfig <- function(App, DataSizeGB){
+  if(App=="SVM"){
+    f <- read.table(file = "SVM.txt", header = TRUE)
+    f <- filter(f, f$DataSize==DataSizeGB)
+    min_val <- min(f$Predictions)
+    min_ob <- filter(f, f$Prediction==min_val) %>% head(1)
+    max_val <- max(f$Predictions)
+    max_ob <- filter(f, f$Prediction==max_val) %>% head(1)
+    return(list("Best Config"=min_ob, "Worst Config"=max_ob))
+  }else if(App=="RF"){
+    f <- read.table(file = "RF.txt", header = TRUE)
+    f <- filter(f, f$DataSize==DataSizeGB)
+    min_val <- min(f$Predictions)
+    min_ob <- filter(f, f$Prediction==min_val) %>% head(1)
+    max_val <- max(f$Predictions)
+    max_ob <- filter(f, f$Prediction==max_val) %>% head(1)
+    return(list("Best Config"=min_ob, "Worst Config"=max_ob))
+  }else if(App=="LR"){
+    f <- read.table(file = "LR.txt", header = TRUE)
+    f <- filter(f, f$DataSize==DataSizeGB)
+    min_val <- min(f$Predictions)
+    min_ob <- filter(f, f$Prediction==min_val) %>% head(1)
+    max_val <- max(f$Predictions)
+    max_ob <- filter(f, f$Prediction==max_val) %>% head(1)
+    return(list("Best Config"=min_ob, "Worst Config"=max_ob)) 
+  }else if(App=="KMEANS"){
+    f <- read.table(file = "KMEANS.txt", header = TRUE)
+    f <- filter(f, f$DataSize==DataSizeGB)
+    min_val <- min(f$Predictions)
+    min_ob <- filter(f, f$Prediction==min_val) %>% head(1)
+    max_val <- max(f$Predictions)
+    max_ob <- filter(f, f$Prediction==max_val) %>% head(1)
+    return(list("Best Config"=min_ob, "Worst Config"=max_ob))
+  }else if(App=="BAYES"){
+    f <- read.table(file = "BAYES.txt", header = TRUE)
+    f <- filter(f, f$DataSize==DataSizeGB)
+    min_val <- min(f$Predictions)
+    min_ob <- filter(f, f$Prediction==min_val) %>% head(1)
+    max_val <- max(f$Predictions)
+    max_ob <- filter(f, f$Prediction==max_val) %>% head(1)
+    return(list("Best Config"=min_ob, "Worst Config"=max_ob))
+  }else if(App=="LINEAR"){
+   f <- read.table(file = "LINEAR-REG.txt", header = TRUE)
+    f <- filter(f, f$DataSize==DataSizeGB)
+    min_val <- min(f$Predictions)
+    min_ob <- filter(f, f$Prediction==min_val) %>% head(1)
+    max_val <- max(f$Predictions)
+    max_ob <- filter(f, f$Prediction==max_val) %>% head(1)
+    return(list("Best Config"=min_ob, "Worst Config"=max_ob))
   }
 }
