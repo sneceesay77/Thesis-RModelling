@@ -24,20 +24,26 @@ library(ggplot2)
 library(caret)
 
 
-generatePlotBestConfig <- function(datafile, title, color){
+generatePlotBestConfig <- function(datafile, title, color, ds){
   
   f <- read.table(file = datafile, header = TRUE)
+  f <- filter(f, f$DataSize==ds)
+  
   min_val <- min(f$Predictions)
   min_ob <- filter(f, f$Prediction==min_val) %>% head(1)
   
-  max_val <- min(f$Predictions)
+  max_val <- max(f$Predictions)
   max_ob <- filter(f, f$Prediction==max_val) %>% head(1)
   
     p<-ggplot(f, aes(x=seq(1:nrow(f)),y=f$Predictions, colour=factor(f[[color]]))) + geom_point()+labs(x="Observation",y="Time(s)", color=color)+ggtitle(title)+
-      geom_text(aes(70, min_val, label=best_ob$Numex))+
+      geom_text(aes(70, min_val, label=min_ob$Numex))+
       theme(plot.title = element_text(size = 12, face = "bold"), axis.text.y=element_text(size=11, face = "bold"),
             axis.title=element_text(size=12,face="bold"), axis.text.x = element_text(size = 11, face = "bold", angle = 0, hjust = 1))
   return(list("p"=p, "minob"=min_ob, "maxob"=max_ob))
 }
 
-p <- generatePlotBestConfig("bestconfigLR.txt", "Title", "DataSize")
+p <- generatePlotBestConfig("KMEANS.txt", "Title", "DataSize", 12)
+
+p$minob
+p$maxob
+p$p
