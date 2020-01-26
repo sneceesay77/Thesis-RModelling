@@ -1,0 +1,26 @@
+First put the necessary codes in to a R script, this should have an end point that the API can be accessed from. See deploy_plumer.R file. 
+
+To run the plummer then use Rscript command, The plummer runner code is simple, see plumer_deamon.R file. 
+
+Rscript plumer_deamon.R
+
+You can use nohup to have this run as a process. 
+
+ 
+User curl or POSTMAN to send request to the REST api
+curl -X POST -d '{"DataSizeGB":18, "NumEx":16, "ExCore":4, "ExMem":8, "LevelPar":16, "App":"SVM"}' -H 'Content-Type: application/json' 127.0.0.1:6767/predict
+
+
+If I want deploy this on the Ubuntu Server and Proxy through the hosts servers at st-andrews then I have to edit the following file. 
+
+/host/sc306/nginx.d/default/proxy.conf
+
+and add the following contents. 
+
+location /dfwc/ {
+ proxy_pass http://138.251.16.15:6767/predict;
+}
+
+so I can now access the REST API using. 
+
+curl -X POST -d '{"DataSizeGB":20, "NumEx":16, "ExCore":4, "ExMem":8, "LevelPar":16, "App":"KMEANS"}' -H 'Content-Type: application/json'  https://sc306.host.cs.st-andrews.ac.uk/dfwc/
