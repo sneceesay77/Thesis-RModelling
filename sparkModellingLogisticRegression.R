@@ -32,6 +32,8 @@ allDataOriginal <- select(allDataOriginal, Duration.s., NumEx, ExCore, ExMem, Le
 
 allDataOriginal <- filter(allDataOriginal, Duration.s. <= 700)
 
+filter(allDataOriginal, NumEx==4 & ExMem==2 & ExCore==2, LevelPar==8)
+
 #Do some data preprocessing
 
 allDataOriginal$ExMem = as.integer(gsub("g", "", allDataOriginal$ExMem))

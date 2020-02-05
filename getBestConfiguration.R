@@ -16,7 +16,7 @@ registerDoMC(cores = 8)
 # dev.off()
 options(scipen=999)
 setwd("/home/sc306/Dropbox/SA/ClusterBenchMarking/hadoop/ClusterBenchmarking/dfwc/")
-
+f <- read.table(file = "SVMORI.txt", header = TRUE, fill = TRUE)
 
 #BigData Application Performance Pridiction and Cluster Recommendation
 #Date :05.05.19
@@ -26,7 +26,8 @@ library(caret)
 
 generatePlotBestConfig <- function(datafile, title, color, ds){
   
-  f <- read.table(file = datafile, header = TRUE)
+  f <- read.table(file = datafile, header = TRUE, fill = TRUE)
+  f <- na.omit(f)
   f <- filter(f, f$DataSize==ds)
   
   min_val <- min(f$Predictions)
@@ -42,7 +43,7 @@ generatePlotBestConfig <- function(datafile, title, color, ds){
   return(list("p"=p, "minob"=min_ob, "maxob"=max_ob))
 }
 
-p <- generatePlotBestConfig("KMEANS.txt", "Title", "DataSize", 12)
+p <- generatePlotBestConfig("SVMORI.txt", "Title", "DataSize", 39)
 
 p$minob
 p$maxob

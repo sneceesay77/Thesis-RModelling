@@ -109,9 +109,9 @@ generatePlot <- function(originalData, filterbyCol, filterByVal, title, color){
 
 generateDistributionPlot <- function(originalData, filterbyCol, filterByVal, title, color){
   f = originalData %>%  filter(originalData[[filterbyCol]] == filterByVal) %>% arrange(!!sym(color))
-  p<-ggplot(f, aes(x=f$Duration.s.,  colour=factor(f[[color]]))) + geom_histogram(binwidth = 30, color="black", fill="white") + labs(x="Time(s)", y="Frequency", color=color)+ggtitle(title)+
-    # geom_vline(aes(xintercept=mean(f$Duration.s., na.rm=T)), color="red", linetype="dashed", size=1)+
-    geom_text(aes(label=round(mean(f$Duration.s., na.rm=T),0),y=0,x=mean(f$Duration.s., na.rm=T)),vjust=-1,col='blue',size=4)
+  p<-ggplot(f, aes(x=f$Duration.s.,  colour=factor(f[[color]]))) + geom_histogram(binwidth  = 35, color="black", fill="white") + labs(x="Time(s)", y="Frequency", color=color)+ggtitle(title)+
+    geom_vline(aes(xintercept=mean(f$Duration.s., na.rm=T)), color="red", linetype="dashed", size=1)+
+    #geom_text(aes(label=round(mean(f$Duration.s., na.rm=T),0),y=0,x=mean(f$Duration.s., na.rm=T)),vjust=-1,col='blue',size=4)
     theme(plot.title = element_text(size = 12, face = "bold"), axis.text.y=element_text(size=11, face = "bold"),
           axis.title=element_text(size=12,face="bold"), axis.text.x = element_text(size = 11, face = "bold", angle = 0, hjust = 1))
   return(p)
@@ -185,7 +185,7 @@ em2 <- generateDistributionPlot(allDataOriginal, "ExMem", 4, "4GB", "DataSizeMB"
 em3 <- generateDistributionPlot(allDataOriginal, "ExMem", 6, "6GB", "DataSizeMB")
 em4 <- generateDistributionPlot(allDataOriginal, "ExMem", 8, "8GB", "DataSizeMB")
 
-annotate_figure(ggarrange(em1, em2, em3, em4, ncol=2, nrow=2, common.legend = TRUE, legend = "bottom"), top="Scaling Executor Memory")
+annotate_figure(ggarrange(em1, em2, em3, em4, ncol=2, nrow=2, common.legend = TRUE, legend = "bottom"))
 
 p10<-generatePlot(allDataOriginal, "ExMem", 2, "2GB", "DataSizeMB")
 p11<-generatePlot(allDataOriginal, "ExMem", 4, "4GB", "DataSizeMB")

@@ -70,6 +70,8 @@ head(allDataOriginal)
 str(allDataOriginal)
 #allDataOriginal = filter(allDataOriginal, allDataOriginal$Duration.s. <= 3000)
 
+filter(allDataOriginal, NumEx==4 & ExMem==2 & ExCore==2, LevelPar==8)
+
 summary(allDataOriginal)
 
 #allDataOriginal$NumEx = factor(allDataOriginal$NumEx)

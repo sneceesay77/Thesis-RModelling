@@ -46,6 +46,8 @@ str(allDataOriginal)
 
 summary(allDataOriginal)
 
+filter(allDataOriginal, NumEx==4 & ExMem==2 & ExCore==2, LevelPar==8)
+
 #allDataOriginal$NumEx = factor(allDataOriginal$NumEx)
 #allDataOriginal$ExCore = factor(allDataOriginal$ExCore)
 #allDataOriginal$ExMem = factor(allDataOriginal$ExMem)
