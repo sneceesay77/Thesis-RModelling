@@ -1,0 +1,20 @@
+More information can be found at https://aws.amazon.com/blogs/aws/new-aws-price-list-api/
+
+
+Steps to take
+
+1. You must get an offer code: Basically, an offer code identifies the service one is interested in. 
+
+2. After getting an offer code, you can substitute the offer code in the url below. 
+
+  https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/{offer_code}/current/index.{format}
+
+So for EC2 pricing
+
+3. https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonEC2/current/index.json --> to get the json file
+
+4. https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonEC2/current/index.csv --> to get csv file
+
+5. In my work, I use csv file and import that MongoDB for querying.
+
+The size of the file is about 1.2 GB. Also the file gets updated regularly.  
