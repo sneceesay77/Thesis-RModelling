@@ -8,6 +8,7 @@ library(e1071)
 library(randomForest)
 library(caTools)
 library(jsonlite)
+library(mongolite)
 
 
 
@@ -118,3 +119,36 @@ bestConfig <- function(App, DataSizeGB){
     return(list("Best Config"=min_ob, "Worst Config"=max_ob))
   }
 }
+
+#* @post /bestec2
+generateBestEC2Instance <- function(NumEx, ExMem, ExCore, DataSize){
+  totalNodes <- ceiling(NumEx/5)
+  exPerNode <- 5
+  memPerNode <- exPerNode * ExMem
+  corePerNode <- exPerNode * ExCore
+  
+  totalNodes1 <- ceiling(NumEx/3)
+  exPerNode1 <- 3
+  memPerNode1 <- exPerNode1 * ExMem
+  corePerNode1 <- exPerNode1 * ExCore
+  
+  # connect to mongodb
+  m <- mongo(db = "dfwc", collection  = "aws_pricing")
+  # query based on numex, exmem, excore
+  result= m$find(paste0('{"Operating System":"Linux", "PricePerUnit": {"$ne":0}, "Unit":{"$eq": "Hrs"}, "vCPU":{"$gte":', corePerNode,'}, "Memory":{"$gte":', memPerNode,'}, "Pre Installed S/W" : "NA"}'), 
+                 fields = '{"_id":0, "PricePerUnit" : 1,"Currency" : 1, "Instance Type" : 1,"Instance Family" : 1,"vCPU" : 1,"Memory" : 1,"Storage" : 1,"Operating System" : 1}',
+                 limit = 1,
+                 sort = '{"PricePerUnit": 1}'
+                 
+  )
+  
+  result1= m$find(paste0('{"Operating System":"Linux", "PricePerUnit": {"$ne":0}, "Unit":{"$eq": "Hrs"}, "vCPU":{"$gte":', corePerNode1,'}, "Memory":{"$gte":', memPerNode1,'}, "Pre Installed S/W" : "NA"}'), 
+                 fields = '{"_id":0, "PricePerUnit" : 1,"Currency" : 1, "Instance Type" : 1,"Instance Family" : 1,"vCPU" : 1,"Memory" : 1,"Storage" : 1,"Operating System" : 1}',
+                 limit = 1,
+                 sort = '{"PricePerUnit": 1}'
+  )
+  
+  return(list("BestEC2_1"=result, "BestEC2_2"=result1, "TotalNodes"=totalNodes))
+}
+
+generateBestEC2Instance(17, 19, 5, 12)

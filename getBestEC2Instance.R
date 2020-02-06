@@ -39,11 +39,11 @@ generatePlotBestConfig <- function(datafile, title, color, ds){
   return(list("minob"=min_ob, "maxob"=max_ob))
 }
 
-p <- generatePlotBestConfig("SVMORI.txt", "Title", "DataSize", 12)
+p <- generatePlotBestConfig("SVMORI.txt", "Title", "DataSize", 100)
 
 p$minob
 
-generateBestEC2Instance <- function(Numex, ExMem, ExCore){
+generateBestEC2Instance <- function(NumEx, ExMem, ExCore){
   # connect to mongodb
   m <- mongo(db = "dfwc", collection  = "aws_pricing")
   # query based on numex, exmem, excore
