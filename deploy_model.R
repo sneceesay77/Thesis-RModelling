@@ -143,12 +143,15 @@ generateBestEC2Instance <- function(NumEx, ExMem, ExCore, DataSize){
   )
   
   result1= m$find(paste0('{"Operating System":"Linux", "PricePerUnit": {"$ne":0}, "Unit":{"$eq": "Hrs"}, "vCPU":{"$gte":', corePerNode1,'}, "Memory":{"$gte":', memPerNode1,'}, "Pre Installed S/W" : "NA"}'), 
-                 fields = '{"_id":0, "PricePerUnit" : 1,"Currency" : 1, "Instance Type" : 1,"Instance Family" : 1,"vCPU" : 1,"Memory" : 1,"Storage" : 1,"Operating System" : 1}',
+                 fields = '{"_id":0, "PricePerUnit" : 1,"Currency" : 1, "Instance Type" : 1,"Instance Family" : 1,"vCPU" : 1,"Memory" : 1}',
                  limit = 1,
                  sort = '{"PricePerUnit": 1}'
   )
   
-  return(list("BestEC2_1"=result, "BestEC2_2"=result1, "TotalNodes"=totalNodes))
+  result["TotalNodes"] = totalNodes
+  result1["TotalNodes"] = totalNodes1
+  
+  return(list("BestEC2_1"=result, "BestEC2_2"=result1))
 }
 
-generateBestEC2Instance(17, 19, 5, 12)
+#generateBestEC2Instance(29, 18, 5, 12)
