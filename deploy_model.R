@@ -136,7 +136,7 @@ generateBestEC2Instance <- function(NumEx, ExMem, ExCore, DataSize){
   m <- mongo(db = "dfwc", collection  = "aws_pricing")
   # query based on numex, exmem, excore
   result= m$find(paste0('{"Operating System":"Linux", "PricePerUnit": {"$ne":0}, "Unit":{"$eq": "Hrs"}, "vCPU":{"$gte":', corePerNode,'}, "Memory":{"$gte":', memPerNode,'}, "Pre Installed S/W" : "NA"}'), 
-                 fields = '{"_id":0, "PricePerUnit" : 1,"Currency" : 1, "Instance Type" : 1,"Instance Family" : 1,"vCPU" : 1,"Memory" : 1,"Storage" : 1,"Operating System" : 1}',
+                 fields = '{"_id":0, "PricePerUnit" : 1,"Currency" : 1, "Instance Type" : 1,"Instance Family" : 1,"vCPU" : 1,"Memory" : 1}',
                  limit = 1,
                  sort = '{"PricePerUnit": 1}'
                  
